@@ -1,6 +1,3 @@
-// GameStates.h
-#pragma once
-
 enum class GameState {
     MAIN_MENU,
     LOADING_SCREEN,

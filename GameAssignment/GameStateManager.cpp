@@ -19,25 +19,20 @@ void GameStateManager::update(float deltaTime) {
     case GameState::IN_GAME:
         updateInGame(deltaTime);
         break;
-    case GameState::GAME_OVER:
-        updateGameOver(deltaTime);
-        break;
     }
 }
 
 void GameStateManager::render() {
     switch (currentState) {
     case GameState::MAIN_MENU:
-        renderMainMenu();
+        renderMainMenu(mainMenu);
+        mainMenu->display();
         break;
     case GameState::LOADING_SCREEN:
-        renderLoadingScreen();
+        renderLoadingScreen(loading);
         break;
     case GameState::IN_GAME:
-        renderInGame();
-        break;
-    case GameState::GAME_OVER:
-        renderGameOver();
+        renderInGame(game);
         break;
     }
 }
@@ -52,9 +47,8 @@ void GameStateManager::updateMainMenu(float deltaTime) {
     }
 }
 
-void GameStateManager::renderMainMenu(MainMenu* mainMenu) {
+void GameStateManager::renderMainMenu(GraphicDevice* graphicDevice) {
     graphicDevice->createDevice(windowManager->getHWND());
-    mainMenu->display();
 }
 
 void GameStateManager::updateLoadingScreen(float deltaTime) {

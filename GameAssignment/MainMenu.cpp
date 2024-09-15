@@ -42,6 +42,7 @@ void MainMenu::loadTextures() {
 }
 
 void MainMenu::display() {
+    loadTextures();
     // Menu rendering loop
     MSG msg;
     bool menuRunning = true;

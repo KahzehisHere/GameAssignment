@@ -1,9 +1,31 @@
 #include "WindowManager.h"
 
-WindowManager::WindowManager(int ScreenWidth, int ScreenHeight, bool fullscreen, int fullWidth, int fullHeight)
-    : g_hWnd(NULL), windowWidth(ScreenWidth), windowHeight(ScreenHeight), fullscreenWidth(fullWidth), fullscreenHeight(fullHeight), isFullscreen(fullscreen) {}
+using namespace std;
 
-WindowManager::~WindowManager() {}
+WindowManager::WindowManager(int ScreenWidth, int ScreenHeight, bool fullscreen, int fullWidth, int fullHeight) {}
+
+WindowManager::~WindowManager() {
+   
+}
+
+LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+    switch (message) {
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        break;
+
+
+    case WM_MOUSEMOVE:
+        /*mousePos.x = (short)LOWORD(lParam);
+        mousePos.y = (short)HIWORD(lParam);*/
+        cout << "X: " << " Y: "  << endl;
+        break;
+
+    default:
+        return DefWindowProc(hWnd, message, wParam, lParam);
+    }
+    return 0;
+}
 
 HWND WindowManager::createWindow(HINSTANCE hInstance) {
     ZeroMemory(&wndClass, sizeof(wndClass));
@@ -13,41 +35,14 @@ HWND WindowManager::createWindow(HINSTANCE hInstance) {
     wndClass.lpfnWndProc = DefWindowProc;
     wndClass.lpszClassName = "MainWindowClass";
     wndClass.style = CS_HREDRAW | CS_VREDRAW;
-
+    RegisterClass(&wndClass);
     if (!RegisterClass(&wndClass)) {
         MessageBox(NULL, "Failed to register window class", "Error", MB_OK);
         return NULL;
     }
-
-    DWORD style = WS_OVERLAPPEDWINDOW;
-    if (isFullscreen) {
-        style = WS_POPUP;
-    }
-
-    g_hWnd = CreateWindow("MainWindowClass", "Game Window", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 1280, 720, NULL, NULL, hInstance, NULL);
-
-    if (!g_hWnd) {
-        MessageBox(NULL, "Failed to create window", "Error", MB_OK);
-        return NULL;
-    }
-
-    applyWindowMode();
+    g_hWnd = CreateWindowEx(0, wndClass.lpszClassName, "ADAM's Apple", WS_POPUP, 0, 0, fullscreenWidth, fullscreenHeight, NULL, NULL, hInstance, NULL);
     ShowWindow(g_hWnd, SW_SHOWDEFAULT);
-    UpdateWindow(g_hWnd);
-
     return g_hWnd;
-}
-
-void WindowManager::applyWindowMode() {
-    if (isFullscreen) {
-        SetWindowLong(g_hWnd, GWL_STYLE, WS_POPUP);
-        SetWindowPos(g_hWnd, HWND_TOP, 0, 0, fullscreenWidth, fullscreenHeight, SWP_FRAMECHANGED);
-    }
-    else {
-        SetWindowLong(g_hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
-        SetWindowPos(g_hWnd, HWND_TOP, 100, 100, windowWidth, windowHeight, SWP_FRAMECHANGED);
-    }
-    ShowWindow(g_hWnd, SW_SHOWDEFAULT);
 }
 
 bool WindowManager::windowIsRunning() {

@@ -133,12 +133,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Frametime.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameCharacter.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameStateManager.cpp" />
+    <ClCompile Include="Gork.cpp" />
     <ClCompile Include="GraphicDevice.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="LoadingScreen.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="Militia.cpp" />
     <ClCompile Include="WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -146,11 +153,18 @@
     <None Include="..\..\..\..\..\..\..\..\..\..\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows\api\core\lib\x86\fmodL.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Frametime.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="GameCharacter.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameStateManager.h" />
+    <ClInclude Include="Gork.h" />
     <ClInclude Include="GraphicDevice.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="LoadingScreen.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Militia.h" />
     <ClInclude Include="WindowManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

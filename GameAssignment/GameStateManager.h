@@ -4,6 +4,8 @@
 #include "GraphicDevice.h"
 #include "MainMenu.h"
 #include "GameStates.h"
+#include "Game.h"
+#include "LoadingScreen.h"
 
 class GameStateManager {
 public:
@@ -14,19 +16,19 @@ public:
     void render();
     void changeState(GameState newState);
 
+    void updateMainMenu(float deltaTime);
+    void updateLoadingScreen(float deltaTime);
+    void updateInGame(float deltaTime);
+
+    void renderMainMenu(MainMenu* mainMenu);
+    void renderLoadingScreen(LoadingScreen* loading);
+    void renderInGame(Game* game);
+
 private:
+
     GameState currentState;
     InputManager* inputManager;
     WindowManager* windowManager;
     GraphicDevice* graphicDevice;
-
-    void updateMainMenu(float deltaTime);
-    void updateLoadingScreen(float deltaTime);
-    void updateInGame(float deltaTime);
-    void updateGameOver(float deltaTime);
-
-    void renderMainMenu(MainMenu* mainMenu);
-    void renderLoadingScreen();
-    void renderInGame();
-    void renderGameOver();
+    MainMenu* mainMenu;
 };

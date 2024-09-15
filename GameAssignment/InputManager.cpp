@@ -1,14 +1,18 @@
 #include "InputManager.h"
+#include "WindowManager.h"
 #include <iostream>
 
-InputManager::InputManager() : directInput(nullptr), keyboardDevice(nullptr), mouseDevice(nullptr) {}
+InputManager::InputManager() {}
 
 InputManager::~InputManager() {
     cleanUp();
 }
+WindowManager windowManager;
+HWND hwnd = windowManager.getHWND();
 
 bool InputManager::initialize(HINSTANCE hInstance, HWND hwnd) {
-    this->hwnd = hwnd;  // Store the window handle for use in input processing
+    WindowManager windowManager;
+    hwnd = windowManager.getHWND();  // Store the window handle for use in input processing
 
     HRESULT hr = DirectInput8Create(hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, NULL);
     if (FAILED(hr)) {
@@ -17,74 +21,71 @@ bool InputManager::initialize(HINSTANCE hInstance, HWND hwnd) {
     }
 
     // Initialize the keyboard device
-    hr = directInput->CreateDevice(GUID_SysKeyboard, &keyboardDevice, NULL);
+    hr = directInput->CreateDevice(GUID_SysKeyboard, &dInputKeyboardDevice, NULL);
     if (FAILED(hr)) {
         std::cout << "Failed to create keyboard device." << std::endl;
         return false;
     }
-    hr = keyboardDevice->SetDataFormat(&c_dfDIKeyboard);
-    hr = keyboardDevice->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
-    keyboardDevice->Acquire();
+    hr = dInputKeyboardDevice->SetDataFormat(&c_dfDIKeyboard);
+    hr = dInputKeyboardDevice->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+    dInputKeyboardDevice->Acquire();
 
     // Initialize the mouse device
-    hr = directInput->CreateDevice(GUID_SysMouse, &mouseDevice, NULL);
+    hr = directInput->CreateDevice(GUID_SysMouse, &dInputMouseDevice, NULL);
     if (FAILED(hr)) {
         std::cout << "Failed to create mouse device." << std::endl;
         return false;
     }
-    hr = mouseDevice->SetDataFormat(&c_dfDIMouse);
-    hr = mouseDevice->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
-    mouseDevice->Acquire();
+    hr = dInputMouseDevice->SetDataFormat(&c_dfDIMouse);
+    hr = dInputMouseDevice->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+    dInputMouseDevice->Acquire();
 
     return true;
 }
 
 void InputManager::getInput() {
-    // Poll the keyboard state
-    HRESULT hr = keyboardDevice->GetDeviceState(sizeof(keyboardState), (LPVOID)&keyboardState);
-    if (FAILED(hr)) {
-        if ((hr == DIERR_INPUTLOST) || (hr == DIERR_NOTACQUIRED)) {
-            keyboardDevice->Acquire();
-        }
-    }
+    WindowManager windowmanager;
+    int fullscreenWidth = windowmanager.getFullcreenWidth();
+    int fullscreenHeight = windowmanager.getFullscreenHeight();
+    //	Get immediate Keyboard Data.
+    dInputKeyboardDevice->GetDeviceState(256, diKeys);
+    dInputMouseDevice->GetDeviceState(sizeof(DIMOUSESTATE), (LPVOID)&mouse_state);
 
-    // Poll the mouse state
-    hr = mouseDevice->GetDeviceState(sizeof(DIMOUSESTATE), (LPVOID)&mouseState);
-    if (FAILED(hr)) {
-        if ((hr == DIERR_INPUTLOST) || (hr == DIERR_NOTACQUIRED)) {
-            mouseDevice->Acquire();
-        }
-    }
+    // Update the cursor position based on relative movement (deltas)
+    cursorPos.x += mouse_state.lX;  // Increment based on horizontal delta
+    cursorPos.y += mouse_state.lY;  // Increment based on vertical delta
+
+    // Keep the cursor within the screen boundaries
+    cursorPos.x = clamp(cursorPos.x, 0.0f, (float)fullscreenWidth - 32);  // Assuming 32x32 cursor size
+    cursorPos.y = clamp(cursorPos.y, 0.0f, (float)fullscreenHeight - 32); // Assuming 32x32 cursor size
+
 }
 
-bool InputManager::isKeyPressed(int key) {
-    return keyboardState[key] & 0x80;
+bool InputManager::isMouseOverButton(RECT buttonRect) {
+    return cursorPos.x >= buttonRect.left && cursorPos.x <= buttonRect.right &&
+        cursorPos.y >= buttonRect.top && cursorPos.y <= buttonRect.bottom;
 }
 
 bool InputManager::isMouseButtonPressed(int button) {
-    return mouseState.rgbButtons[button] & 0x80;
-}
-
-POINT InputManager::getMousePosition() {
-    POINT cursorPos;
-    GetCursorPos(&cursorPos);
-    ScreenToClient(hwnd, &cursorPos);  // Convert to window coordinates
-    return cursorPos;
+    return mouse_state.rgbButtons[button] & 0x80;
 }
 
 void InputManager::cleanUp() {
-    if (keyboardDevice) {
-        keyboardDevice->Unacquire();
-        keyboardDevice->Release();
-        keyboardDevice = nullptr;
-    }
-    if (mouseDevice) {
-        mouseDevice->Unacquire();
-        mouseDevice->Release();
-        mouseDevice = nullptr;
-    }
-    if (directInput) {
-        directInput->Release();
-        directInput = nullptr;
-    }
+    //	Create the Direct Input object.
+    HRESULT hr = DirectInput8Create(GetModuleHandle(NULL), 0x0800, IID_IDirectInput8, (void**)&directInput, NULL);
+    //	Create the keyboard device.
+    hr = directInput->CreateDevice(GUID_SysKeyboard, &dInputKeyboardDevice, NULL);
+    hr = directInput->CreateDevice(GUID_SysMouse, &dInputMouseDevice, NULL);
+    //	Set the input data format.
+    dInputKeyboardDevice->SetDataFormat(&c_dfDIKeyboard);
+    dInputMouseDevice->SetDataFormat(&c_dfDIMouse);
+
+    //	Set the cooperative level.
+    //	To Do:
+    //	Try with different combination.
+    dInputKeyboardDevice->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+    dInputMouseDevice->SetCooperativeLevel(hwnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
+
+    dInputKeyboardDevice->Acquire();
+    dInputMouseDevice->Acquire();
 }

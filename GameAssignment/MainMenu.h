@@ -4,6 +4,7 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include "InputManager.h"
+#include "GraphicDevice.h"
 #include "WindowManager.h"
 
 class MainMenu {
@@ -23,6 +24,13 @@ private:
     LPDIRECT3DTEXTURE9 mainMenuBackground;
     RECT startButtonRect;
     RECT exitButtonRect;
+
+    RECT getSbutton() {
+        return startButtonRect;
+    }
+    RECT getEbutton() {
+        return exitButtonRect;
+    }
 };
 
 #endif

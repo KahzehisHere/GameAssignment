@@ -2,6 +2,7 @@
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 #include <Windows.h>
+#include "WindowManager.h"
 
 class InputManager {
 public:
@@ -10,19 +11,26 @@ public:
 
     bool initialize(HINSTANCE hInstance, HWND hwnd);
     void getInput();  // Polls input devices
-    bool isKeyPressed(int key);  // Checks if a specific key is pressed
+    bool isMouseOverButton(RECT buttonRect);  // Checks if a specific key is pressed
     bool isMouseButtonPressed(int button);  // Checks if a specific mouse button is pressed
     POINT getMousePosition();  // Gets mouse cursor position
 
     void cleanUp();
 
 private:
-    LPDIRECTINPUT8 directInput;  // DirectInput interface
-    LPDIRECTINPUTDEVICE8 keyboardDevice;  // Keyboard device
-    LPDIRECTINPUTDEVICE8 mouseDevice;  // Mouse device
-
-    BYTE keyboardState[256];  // Array to store keyboard state
-    DIMOUSESTATE mouseState;  // Struct to store mouse state
-
-    HWND hwnd;  // Handle to the window
+    //Input
+    //	Direct Input object.
+    LPDIRECTINPUT8 directInput;
+    //	Direct Input keyboard device.
+    LPDIRECTINPUTDEVICE8  dInputKeyboardDevice;
+    LPDIRECTINPUTDEVICE8  dInputMouseDevice;
+    //	Key input buffer
+    BYTE  diKeys[256];
+    DIMOUSESTATE mouse_state;
+    POINT cursorPos;
+    float clamp(float value, float min, float max) {
+        if (value < min) return min;
+        if (value > max) return max;
+        return value;
+    }
 };

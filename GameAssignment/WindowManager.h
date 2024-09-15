@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
+#include <dinput.h>
 #include <iostream>
 
 using namespace std;
@@ -18,17 +19,16 @@ private:
     int fullscreenHeight;
     bool isFullscreen;
 
-    void applyWindowMode();
 
 public:
     WindowManager(int ScreenWidth = 1280, int ScreenHeight = 720, bool fullscreen = false, int fullscreenWidth = 1920, int fullscreenHeight = 1080);
     ~WindowManager();
 
+    LRESULT WindowProcedure(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
     HWND createWindow(HINSTANCE hInstance);
     bool windowIsRunning();
     void cleanup(HINSTANCE hInstance);
-    void toggleFullcreen();
-    void setFullscreenResolution();
+
     int getFullcreenWidth() const { return fullscreenWidth; }
     int getFullscreenHeight() const { return fullscreenHeight; }
     int getWidth() const { return windowWidth; }

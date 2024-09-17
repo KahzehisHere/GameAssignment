@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d9.h>
 #include <d3dx9.h>
+#include "WindowManager.h"
 
 class GraphicDevice {
 public:
@@ -16,6 +17,15 @@ public:
     int getScreenHeight() {
         return screenHeight;
     }
+
+    IDirect3D9* getDirect3D(){
+        return direct3D9;
+    }
+
+    IDirect3DDevice9* getDirectDevice() {
+        return d3dDevice;
+    }
+
 private:
 
     IDirect3D9* direct3D9 = NULL;

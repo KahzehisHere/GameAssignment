@@ -1,5 +1,5 @@
 #include "GraphicDevice.h"
-#include "WindowManager.h"
+
 
 WindowManager windowManager;
 HWND hwnd = windowManager.getHWND();

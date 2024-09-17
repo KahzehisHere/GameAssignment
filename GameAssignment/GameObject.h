@@ -3,20 +3,27 @@
 
 class GameObject {
 protected:
-    D3DXVECTOR3 position;
-    LPDIRECT3DTEXTURE9 texture;
-    int width;
-    int height;
+    D3DXVECTOR3 position;           // Object position in the world
+    LPDIRECT3DTEXTURE9 texture;     // Object texture
+    int width, height;              // Object dimensions
+    RECT boundingBox;               // Bounding box for collision detection
 
 public:
-    GameObject(LPDIRECT3DTEXTURE9 tex, int w, int h, D3DXVECTOR3 pos)
-        : texture(tex), width(w), height(h), position(pos) {}
+    GameObject(LPDIRECT3DTEXTURE9 tex, int w, int h, D3DXVECTOR3 pos);
+    virtual ~GameObject();
 
-    virtual void Update(float deltaTime) = 0;  // Pure virtual method for updating logic
-    virtual void Render(LPD3DXSPRITE sprite) = 0;  // Pure virtual method for rendering logic
+    // Pure virtual methods for derived classes
+    virtual void Update(float deltaTime) = 0;
+    virtual void Render(LPD3DXSPRITE sprite) = 0;
 
-    D3DXVECTOR3 GetPosition() const { return position; }
-    void SetPosition(float x, float y) { position = D3DXVECTOR3(x, y, 0); }
-    int GetWidth() const { return width; }
-    int GetHeight() const { return height; }
+    // Getters and Setters
+    D3DXVECTOR3 GetPosition() const;
+    void SetPosition(float x, float y);
+    int GetWidth() const;
+    int GetHeight() const;
+    RECT GetBoundingBox() const;
+
+protected:
+    void updateBoundingBox();  // Helper function to update bounding box
+    bool checkCollision(const GameObject* other) const;  // Collision detection
 };

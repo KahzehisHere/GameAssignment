@@ -22,6 +22,7 @@ private:
     LPDIRECT3DTEXTURE9 startButtonTexture;
     LPDIRECT3DTEXTURE9 exitButtonTexture;
     LPDIRECT3DTEXTURE9 mainMenuBackground;
+    LPDIRECT3DTEXTURE9 pointer;
     RECT startButtonRect;
     RECT exitButtonRect;
 

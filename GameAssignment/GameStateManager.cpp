@@ -1,85 +1,57 @@
 #include "GameStateManager.h"
-#include <iostream>
+#include "AudioManager.h"
 
-GameStateManager::GameStateManager(InputManager* inputManager, WindowManager* windowManager, GraphicDevice* graphicDevice)
-    : inputManager(inputManager), windowManager(windowManager), graphicDevice(graphicDevice) {
-    currentState = GameState::MAIN_MENU;
+GameStateManager::GameStateManager() {
+    currentState = MAIN_MENU;  // Start with the main menu
+    mainMenu = new MainMenu();
+    loadingScreen = new LoadingScreen();
+    game = new Game();
 }
 
-GameStateManager::~GameStateManager() {}
-
-void GameStateManager::update(float deltaTime) {
-    switch (currentState) {
-    case GameState::MAIN_MENU:
-        updateMainMenu(deltaTime);
-        break;
-    case GameState::LOADING_SCREEN:
-        updateLoadingScreen(deltaTime);
-        break;
-    case GameState::IN_GAME:
-        updateInGame(deltaTime);
-        break;
-    }
-}
-
-void GameStateManager::render() {
-    switch (currentState) {
-    case GameState::MAIN_MENU:
-        renderMainMenu(mainMenu);
-        mainMenu->display();
-        break;
-    case GameState::LOADING_SCREEN:
-        renderLoadingScreen(loading);
-        break;
-    case GameState::IN_GAME:
-        renderInGame(game);
-        break;
-    }
+GameStateManager::~GameStateManager() {
+    delete mainMenu;
+    delete loadingScreen;
+    delete game;
 }
 
 void GameStateManager::changeState(GameState newState) {
     currentState = newState;
 }
 
-void GameStateManager::updateMainMenu(float deltaTime) {
-    if (inputManager->isKeyPressed(DIK_RETURN)) {
-        changeState(GameState::LOADING_SCREEN);
+void GameStateManager::update() {
+    switch (currentState) {
+    case MAIN_MENU:
+        mainMenu->update(inputManager);
+        break;
+    case PLAYING:
+        game->Logic(deltaTime, AudioManager & audioManager);
+        game->update();
+        game->updateAnimation(deltaTime);
+        break;
+    case LOADING_SCREEN:
+        loadingScreen->render();
+        break;
+    case GAME_OVER:
+        // Handle game over update logic here
+        break;
     }
 }
 
-void GameStateManager::renderMainMenu(GraphicDevice* graphicDevice) {
-    graphicDevice->createDevice(windowManager->getHWND());
-}
+void GameStateManager::render() {
+    switch (currentState) {
+    case MAIN_MENU:
+        mainMenu->loadTextures();
+        mainMenu->display();
+        break;
+    case PLAYING:
+        game->render(hr, sprite);
+        break;
+    case LOADING_SCREEN:
+        loadingScreen->loadResources();
 
-void GameStateManager::updateLoadingScreen(float deltaTime) {
-    static float loadingTime = 0.0f;
-    loadingTime += deltaTime;
-    if (loadingTime >= 2.0f) {
-        loadingTime = 0.0f;
-        changeState(GameState::IN_GAME);
+        break;
+    case GAME_OVER:
+        // Handle game over rendering here
+        break;
     }
-}
-
-void GameStateManager::renderLoadingScreen() {
-    graphicDevice->createDevice(windowManager->getHWND());
-}
-
-void GameStateManager::updateInGame(float deltaTime) {
-    if (inputManager->isKeyPressed(DIK_ESCAPE)) {
-        changeState(GameState::GAME_OVER);
-    }
-}
-
-void GameStateManager::renderInGame() {
-    graphicDevice->createDevice(windowManager->getHWND());
-}
-
-void GameStateManager::updateGameOver(float deltaTime) {
-    if (inputManager->isKeyPressed(DIK_RETURN)) {
-        changeState(GameState::MAIN_MENU);
-    }
-}
-
-void GameStateManager::renderGameOver() {
-    graphicDevice->createDevice(windowManager->getHWND());
 }

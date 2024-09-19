@@ -1,29 +1,35 @@
 #pragma once
+#include "GraphicDevice.h"
 #include <d3dx9.h>
+using namespace std;
 
 class GameObject {
-protected:
-    D3DXVECTOR3 position;           // Object position in the world
-    LPDIRECT3DTEXTURE9 texture;     // Object texture
-    int width, height;              // Object dimensions
-    RECT boundingBox;               // Bounding box for collision detection
-
 public:
-    GameObject(LPDIRECT3DTEXTURE9 tex, int w, int h, D3DXVECTOR3 pos);
-    virtual ~GameObject();
+    GameObject(HRESULT hr, LPD3DXLINE line, D3DXVECTOR3 platformPositions[4], RECT platformBoundingBoxes[4], RECT ladderBoundingBox, RECT ladderBoundingBoxRight);
+    
+    void render(HRESULT hr, LPD3DXSPRITE sprite, LPD3DXLINE line);
+    void drawPlatformBoundingBoxes(HRESULT hr, LPD3DXLINE line, D3DXVECTOR3 platformPositions[4], RECT platformBoundingBoxes[4], RECT ladderBoundingBox, RECT ladderBoundingBoxRight);
+    void Update(D3DXVECTOR3 platformPositions[4], RECT platformBoundingBoxes[4], RECT ladderBoundingBox, RECT ladderBoundingBoxRight);
+   
+private:
 
-    // Pure virtual methods for derived classes
-    virtual void Update(float deltaTime) = 0;
-    virtual void Render(LPD3DXSPRITE sprite) = 0;
+    GraphicDevice* device;
+    IDirect3DDevice9* d3dDevice = device->getDirectDevice();
+    LPD3DXLINE line;
+    HRESULT hr;
+    LPD3DXSPRITE sprite;
+    LPD3DXFONT font;
 
-    // Getters and Setters
-    D3DXVECTOR3 GetPosition() const;
-    void SetPosition(float x, float y);
-    int GetWidth() const;
-    int GetHeight() const;
-    RECT GetBoundingBox() const;
+    LPDIRECT3DTEXTURE9 platformTexture;
+    RECT platformBoundingBoxes[4];
+    D3DXVECTOR3 platformPositions[4];
 
-protected:
-    void updateBoundingBox();  // Helper function to update bounding box
-    bool checkCollision(const GameObject* other) const;  // Collision detection
+    LPDIRECT3DTEXTURE9 ladderTexture;
+    RECT ladderBoundingBox;
+    RECT ladderBoundingBoxRight;
+
+    D3DXVECTOR3 applePositions[3];
+    bool applesCollected[3] = { false, false, false };  // Tracks whether each apple has been collected
+    int collectedApples = 0;  // Number of apples collected by the player
+    LPDIRECT3DTEXTURE9 appleTexture;
 };

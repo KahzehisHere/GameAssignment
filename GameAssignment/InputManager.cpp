@@ -87,5 +87,5 @@ void InputManager::cleanUp() {
     dInputMouseDevice->SetCooperativeLevel(hwnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
 
     dInputKeyboardDevice->Acquire();
-    dInputMouseDevice->Acquire();
+    dInputMouseDevice->Acquire(); 
 }

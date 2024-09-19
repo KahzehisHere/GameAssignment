@@ -14,7 +14,7 @@ public:
     bool isMouseOverButton(RECT buttonRect);  // Checks if a specific key is pressed
     bool isMouseButtonPressed(int button);  // Checks if a specific mouse button is pressed
     POINT getMousePosition();  // Gets mouse cursor position
-
+    BYTE  diKeys[256];
     void cleanUp();
 
 private:
@@ -25,7 +25,7 @@ private:
     LPDIRECTINPUTDEVICE8  dInputKeyboardDevice;
     LPDIRECTINPUTDEVICE8  dInputMouseDevice;
     //	Key input buffer
-    BYTE  diKeys[256];
+   
     DIMOUSESTATE mouse_state;
     POINT cursorPos;
     float clamp(float value, float min, float max) {

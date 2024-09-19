@@ -1,34 +1,33 @@
 #pragma once
-#include "InputManager.h"
-#include "WindowManager.h"
-#include "GraphicDevice.h"
 #include "MainMenu.h"
-#include "GameStates.h"
-#include "Game.h"
 #include "LoadingScreen.h"
+#include "InputManager.h"
+#include "Game.h"
+#include "AudioManager.h"
+
+enum GameState {
+    MAIN_MENU,
+    PLAYING,
+    LOADING_SCREEN,
+    GAME_OVER
+};
 
 class GameStateManager {
 public:
-    GameStateManager(InputManager* inputManager, WindowManager* windowManager, GraphicDevice* graphicDevice);
+    GameStateManager();
     ~GameStateManager();
 
-    void update(float deltaTime);
-    void render();
     void changeState(GameState newState);
-
-    void updateMainMenu(float deltaTime);
-    void updateLoadingScreen(float deltaTime);
-    void updateInGame(float deltaTime);
-
-    void renderMainMenu(MainMenu* mainMenu);
-    void renderLoadingScreen(LoadingScreen* loading);
-    void renderInGame(Game* game);
+    void update();
+    void render();
 
 private:
-
     GameState currentState;
-    InputManager* inputManager;
-    WindowManager* windowManager;
-    GraphicDevice* graphicDevice;
     MainMenu* mainMenu;
+    LoadingScreen* loadingScreen;
+    Game* game;
+    InputManager* inputManager;
+    HRESULT hr;
+    LPD3DXSPRITE sprite;
+    float deltaTime;
 };

@@ -1,49 +1,44 @@
-//#include "GameStateManager.h"
-//#include "InputManager.h"
-//#include "WindowManager.h"
-//#include "GraphicDevice.h"
-//#include "MainMenu.h"
-//#include "Frametime.h"
-//
-//InputManager* inputManager = nullptr;
-//WindowManager* windowManager = nullptr;
-//GraphicDevice* graphicDevice = nullptr;
-//GameStateManager* gameStateManager = nullptr;
-//Frametime* gameTimer = new Frametime();
-//
-//int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
-//    // Initialize WindowManager and GraphicDevice
-//    WindowManager windowManager(1280, 720, false, 1920, 1080);
-//    windowManager.createWindow(hInstance);
-//
-//    GraphicDevice graphicDevice(1280, 720);
-//    graphicDevice.createDevice(windowManager.getHWND());
-//
-//    // Initialize InputManager
-//    InputManager inputManager;
-//    if (!inputManager.initialize(hInstance, windowManager.getHWND())) {
-//        std::cout << "Failed to initialize input manager." << std::endl;
-//        return -1;
-//    }
-//
-//    // Initialize MainMenu
-//    MainMenu mainMenu(&graphicDevice);
-//
-//    // Main game loop
-//    while (windowManager.windowIsRunning()) {
-//        inputManager.getInput();  // Update input
-//
-//        mainMenu.update(&inputManager);  // Update main menu with input
-//
-//        // Render Main Menu
-//        graphicDevice.clear(D3DCOLOR_XRGB(0, 0, 0));  // Clear screen
-//        mainMenu.display();  // Render the main menu
-//        graphicDevice.present();  // Present the rendered scene
-//    }
-//
-//    inputManager.cleanUp();
-//    graphicDevice.cleanup();
-//
-//    return 0;
-//}
-//
+#include "GameStateManager.h"
+#include "WindowManager.h"
+#include "InputManager.h"
+#include "AudioManager.h"
+
+int main() {
+    // Initialize managers
+    WindowManager windowManager;
+    InputManager inputManager;
+    AudioManager audioManager;
+    GameStateManager gameStateManager;
+    HINSTANCE hInstance;
+
+    // Initialize window and audio
+    if (!windowManager.createWindow(hInstance)) {
+        return -1;
+    }
+    audioManager.InitializeAudio();
+
+    // Main game loop
+    bool isRunning = true;
+    while (isRunning) {
+        inputManager.getInput(); // Capture keyboard/mouse input
+
+        // Change game state if ESC is pressed
+        if (inputManager.diKeys[DIK_ESCAPE] & 0x80) {
+            isRunning = false;
+        }
+
+        // Update game state logic
+        gameStateManager.update();
+
+        // Clear the screen before rendering
+        windowManager.cleanup(hInstance);
+
+        // Render the current game state
+        gameStateManager.render();
+
+        // Present the rendered screen
+        windowManager.windowIsRunning();
+    }
+
+    return 0;
+}

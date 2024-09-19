@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 
+using namespace std;
 
 MainMenu::MainMenu(IDirect3DDevice9* device) : d3dDevice(device), startButtonTexture(nullptr), exitButtonTexture(nullptr), mainMenuBackground(nullptr) {
     if (!d3dDevice) {
@@ -17,15 +18,17 @@ MainMenu::~MainMenu() {
 void MainMenu::loadTextures() {
     // Load textures for the menu background, start, and exit buttons
     if (FAILED(D3DXCreateTextureFromFile(d3dDevice, "main_menu_background.png", &mainMenuBackground))) {
-        std::cout << "Failed to load main menu background texture" << std::endl;
+        cout << "Failed to load main menu background texture" << endl;
     }
     if (FAILED(D3DXCreateTextureFromFile(d3dDevice, "startbutton.png", &startButtonTexture))) {
-        std::cout << "Failed to load start button texture" << std::endl;
+        cout << "Failed to load start button texture" << endl;
     }
     if (FAILED(D3DXCreateTextureFromFile(d3dDevice, "exitbutton.png", &exitButtonTexture))) {
-        std::cout << "Failed to load exit button texture" << std::endl;
+        cout << "Failed to load exit button texture" << endl;
     }
-
+    if (FAILED(D3DXCreateTextureFromFile(d3dDevice, "pointer.png", &pointer))){
+        cout << "Failed to load cursor texture" << endl;
+    }
     // Define the positions for the buttons dynamically based on the screen size
     int buttonWidth = 200;
     int buttonHeight = 50;

@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 
+D3DXVECTOR3 cursorPos (640.0f, 360.0f, 0.0f);
 using namespace std;
 
 MainMenu::MainMenu( ) : startButtonTexture(nullptr), exitButtonTexture(nullptr), mainMenuBackground(nullptr), pointer(nullptr) {
@@ -45,6 +46,16 @@ void MainMenu::loadTextures() {
     if (FAILED(D3DXCreateTextureFromFile(d3dDevice, "pointer.png", &pointer))){
         cout << "Failed to load cursor texture" << endl;
     }
+
+    hr = D3DXCreateLine(d3dDevice, &line);
+    if (FAILED(hr)) {
+        cout << "Failed to create line" << endl;
+    }
+
+    hr = D3DXCreateFont(d3dDevice, 25, 0, 0, 1, false,
+        DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, DEFAULT_QUALITY,
+        DEFAULT_PITCH | FF_DONTCARE, "Arial", &font);
+
     // Define the positions for the buttons dynamically based on the screen size
 
     startButtonRect.left = 1000 / 2 - buttonWidth / 2;
@@ -115,9 +126,63 @@ void MainMenu::Render() {
     }
 
     sprite->End();
+     //Draw the boxes around the buttons
+        if (line) {
+            line->SetWidth(2.0f);  // Set line thickness
+            line->Begin();
+            D3DCOLOR lineColor = D3DCOLOR_XRGB(255, 255, 0);  // Yellow color
+
+            // Draw a box around the "Start Game" button
+            D3DXVECTOR2 startButtonBox[5] = {
+                D3DXVECTOR2(startButtonRect.left, startButtonRect.top),
+                D3DXVECTOR2(startButtonRect.right, startButtonRect.top),
+                D3DXVECTOR2(startButtonRect.right, startButtonRect.bottom),
+                D3DXVECTOR2(startButtonRect.left, startButtonRect.bottom),
+                D3DXVECTOR2(startButtonRect.left, startButtonRect.top)  // Close the rectangle
+            };
+            line->Draw(startButtonBox, 5, lineColor);
+
+            // Draw a box around the "Exit" button
+            D3DXVECTOR2 exitButtonBox[5] = {
+                D3DXVECTOR2(exitButtonRect.left, exitButtonRect.top),
+                D3DXVECTOR2(exitButtonRect.right, exitButtonRect.top),
+                D3DXVECTOR2(exitButtonRect.right, exitButtonRect.bottom),
+                D3DXVECTOR2(exitButtonRect.left, exitButtonRect.bottom),
+                D3DXVECTOR2(exitButtonRect.left, exitButtonRect.top)  // Close the rectangle
+            };
+            line->Draw(exitButtonBox, 5, lineColor);
+
+            line->End();
+        }
+        if (font) {
+            // Draw text over the "Start Game" button, centered
+            RECT startTextRect = startButtonRect;
+            startTextRect.top += 10; // Adjust vertically if needed
+            font->DrawText(NULL, "Start Game", -1, &startTextRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE, D3DCOLOR_XRGB(255, 255, 255));
+        }
+
+        // Draw the text over the "Exit" button, centered
+        if (font) {
+            RECT exitTextRect = exitButtonRect;
+            exitTextRect.top += 10; // Adjust vertically if needed
+            font->DrawText(NULL, "Exit", -1, &exitTextRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE, D3DCOLOR_XRGB(255, 255, 255));
+        }
+    inputManager->getInput();
+    // Draw the custom cursor
+    if (pointer) {
+        D3DXVECTOR3 cursorDrawPos = cursorPos;  // Use tracked cursor position
+
+        cursorDrawPos.x -= 16;  // Assuming 32x32 cursor size, adjust by half the size
+        cursorDrawPos.y -= 16;
+
+        sprite->Begin(D3DXSPRITE_ALPHABLEND);
+        sprite->Draw(pointer, NULL, NULL, &cursorDrawPos, D3DCOLOR_XRGB(255, 255, 255));
+        sprite->End();
+
+    }
     d3dDevice->EndScene();
     d3dDevice->Present(NULL, NULL, NULL, NULL);
-
+    
     sprite->Release();
 
 }

@@ -6,6 +6,7 @@
 #include <Windows.h>
 #include "WindowManager.h"
 
+
 class InputManager {
 public:
     InputManager();
@@ -29,4 +30,8 @@ private:
     POINT cursorPos;
     float clamp(float value, float min, float max);
 };
+
+
+extern InputManager* inputManager;
+
 #endif

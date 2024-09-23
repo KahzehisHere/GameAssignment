@@ -29,10 +29,12 @@ private:
     LPDIRECT3DTEXTURE9 exitButtonTexture;          // Exit button texture
     LPDIRECT3DTEXTURE9 mainMenuBackground;         // Menu background texture
     LPDIRECT3DTEXTURE9 pointer;                    // Cursor pointer texture
+    LPD3DXFONT font = NULL;
+    LPD3DXLINE line = NULL;
     IDirect3DDevice9* d3dDevice = device->getDirectDevice();
     RECT startButtonRect;                          // Start button rectangle
     RECT exitButtonRect;                           // Exit button rectangle
-
+    D3DXVECTOR3 cursorPos;
     int buttonWidth = 200;
     int buttonHeight = 50;
 

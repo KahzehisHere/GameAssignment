@@ -58,13 +58,13 @@ void MainMenu::loadTextures() {
 
     // Define the positions for the buttons dynamically based on the screen size
 
-    startButtonRect.left = 1000 / 2 - buttonWidth / 2;
-    startButtonRect.top = 600 / 2 - 100;
+    startButtonRect.left = windowManager->getWidth() / 2 - buttonWidth / 2;
+    startButtonRect.top = windowManager->getHeight() / 2 - 100;
     startButtonRect.right = startButtonRect.left + buttonWidth;
     startButtonRect.bottom = startButtonRect.top + buttonHeight;
 
-    exitButtonRect.left = 1000 / 2 - buttonWidth / 2;
-    exitButtonRect.top = 600 / 2 + 60;
+    exitButtonRect.left = 1280 / 2 - buttonWidth / 2;
+    exitButtonRect.top = 720 / 2 + 60;
     exitButtonRect.right = exitButtonRect.left + buttonWidth;
     exitButtonRect.bottom = exitButtonRect.top + buttonHeight;
 }
@@ -107,21 +107,23 @@ void MainMenu::Render() {
 
     // Draw start button
     if (startButtonTexture) {
-        D3DXVECTOR3 startButtonPos(
-            static_cast<float>(startButtonRect.left),
-            static_cast<float>(startButtonRect.top),
-            0.0f
-        );
+        // Calculate the center position of the button rectangle
+        float centerX = static_cast<float>(startButtonRect.left + buttonWidth / 2);
+        float centerY = static_cast<float>(startButtonRect.top + buttonHeight / 2);
+
+        // Adjust the position to draw the sprite centered on the button
+        D3DXVECTOR3 startButtonPos(centerX - (buttonWidth / 2), centerY - (buttonHeight / 2), 0.0f);
         sprite->Draw(startButtonTexture, NULL, NULL, &startButtonPos, D3DCOLOR_XRGB(255, 255, 255));
     }
 
     // Draw exit button
     if (exitButtonTexture) {
-        D3DXVECTOR3 exitButtonPos(
-            static_cast<float>(exitButtonRect.left),
-            static_cast<float>(exitButtonRect.top),
-            0.0f
-        );
+        // Calculate the center position of the button rectangle
+        float centerX = static_cast<float>(exitButtonRect.left + buttonWidth / 2);
+        float centerY = static_cast<float>(exitButtonRect.top + buttonHeight / 2);
+
+        // Adjust the position to draw the sprite centered on the button
+        D3DXVECTOR3 exitButtonPos(centerX - (buttonWidth / 2), centerY - (buttonHeight / 2), 0.0f);
         sprite->Draw(exitButtonTexture, NULL, NULL, &exitButtonPos, D3DCOLOR_XRGB(255, 255, 255));
     }
 

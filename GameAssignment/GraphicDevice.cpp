@@ -1,8 +1,7 @@
 #include "GraphicDevice.h"
 
 
-WindowManager windowManager;
-HWND hwnd = windowManager.getHWND();
+HWND hwnd = windowManager->getHWND();
 
 // Constructor
 GraphicDevice::GraphicDevice(){}

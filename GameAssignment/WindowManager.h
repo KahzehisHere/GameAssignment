@@ -1,4 +1,6 @@
 #pragma once
+#ifndef WINDOWMANAGER_H
+#define WINDOWMANAGER_H
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <d3d9.h>
@@ -37,3 +39,7 @@ public:
     HWND getHWND() const { return g_hWnd; }
     HINSTANCE getInstance() const { return hInstance; }
 };
+
+extern WindowManager* windowManager;
+
+#endif

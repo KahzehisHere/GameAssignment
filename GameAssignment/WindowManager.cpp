@@ -45,7 +45,7 @@ HWND WindowManager::createWindow(HINSTANCE hInstance) {
 
     DWORD style = isFullscreen ? WS_POPUP : WS_OVERLAPPEDWINDOW;  // Choose window style
 
-    g_hWnd = CreateWindowEx(0, wndClass.lpszClassName, "ADAM's Apple", style, 0, 0, fullscreenWidth, fullscreenHeight, NULL, NULL, hInstance, NULL);
+    g_hWnd = CreateWindowEx(0, wndClass.lpszClassName, "ADAM's Apple", style, 0, 0, windowWidth, windowHeight, NULL, NULL, hInstance, NULL);
     if (!g_hWnd) {
         MessageBox(NULL, "Failed to create window", "Error", MB_OK);
         return NULL;

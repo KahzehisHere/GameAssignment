@@ -11,6 +11,7 @@
 
 extern GraphicDevice* device;
 extern InputManager* inputManager;
+extern WindowManager* windowManager;
 
 class MainMenu : public GameState{
 public:

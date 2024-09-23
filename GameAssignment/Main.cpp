@@ -10,7 +10,7 @@
 
 using namespace std;
 
-WindowManager* window = nullptr;
+WindowManager* windowManager = nullptr;
 GraphicDevice* device = nullptr;
 InputManager* inputManager = nullptr;
 MainMenu* mainMenu = nullptr;
@@ -18,20 +18,20 @@ GameStateManager* gameStateManager = nullptr;
 
 int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
     // Initialize key components
-    window = new WindowManager(1280, 720, false, 1920, 1080);
-    if (!window->createWindow(hInstance)) {
+    windowManager = new WindowManager(1280, 720, false, 1920, 1080);
+    if (!windowManager->createWindow(hInstance)) {
         cout << "Failed to create window." << endl;
         return -1;
     }
 
     device = new GraphicDevice();
-    if (!device->createDevice(window->getHWND())) {
+    if (!device->createDevice(windowManager->getHWND())) {
         cout << "Failed to create Direct3D device." << endl;
         return -1;
     }
 
     inputManager = new InputManager();
-    if (!inputManager->initialize(hInstance, window->getHWND())) {
+    if (!inputManager->initialize(hInstance, windowManager->getHWND())) {
         cout << "Failed to initialize input manager." << endl;
         return -1;
     }
@@ -65,12 +65,18 @@ int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nSho
     }
 
     // Cleanup resources before exiting
-    device->cleanup();
-    window->cleanup();
-    inputManager->cleanUp();
+    if (device) {
+        device->cleanup();
+    }
+    if (windowManager) {
+        windowManager->cleanup();
+    }
+    if (inputManager) {
+        inputManager->cleanUp();
+    }
 
     // Clean up allocated memory
-    delete window;
+    delete windowManager;
     delete device;
     delete inputManager;
     delete gameStateManager;

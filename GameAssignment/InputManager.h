@@ -1,5 +1,6 @@
 #pragma once  // Add this to prevent redefinition
-
+#ifndef INPUTMANAGER_H
+#define INPUTMANAGER_H
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 #include <Windows.h>
@@ -21,10 +22,11 @@ public:
     }
 
 private:
-    LPDIRECTINPUT8 directInput;
+    LPDIRECTINPUT8 dInput;
     LPDIRECTINPUTDEVICE8  dInputKeyboardDevice;
     LPDIRECTINPUTDEVICE8  dInputMouseDevice;
     DIMOUSESTATE mouse_state;
     POINT cursorPos;
     float clamp(float value, float min, float max);
 };
+#endif

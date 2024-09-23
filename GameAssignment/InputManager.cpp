@@ -16,26 +16,26 @@ float InputManager::clamp(float value, float min, float max) {
 }
 
 bool InputManager::initialize(HINSTANCE hInstance, HWND hwnd) {
-    HRESULT hr = DirectInput8Create(hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, NULL);
+    HRESULT hr = DirectInput8Create(GetModuleHandle(NULL), 0x0800, IID_IDirectInput8, (void**)&dInput, NULL);
     if (FAILED(hr)) {
-        std::cout << "Failed to create DirectInput object." << std::endl;
+        std::cout << "Failed to create DirectInput object. Error: " << hr << std::endl;
         return false;
     }
 
-    // Initialize the keyboard device
-    hr = directInput->CreateDevice(GUID_SysKeyboard, &dInputKeyboardDevice, NULL);
+    // Initialize keyboard device
+    hr = dInput->CreateDevice(GUID_SysKeyboard, &dInputKeyboardDevice, NULL);
     if (FAILED(hr)) {
-        std::cout << "Failed to create keyboard device." << std::endl;
+        std::cout << "Failed to create keyboard device. Error: " << hr << std::endl;
         return false;
     }
     dInputKeyboardDevice->SetDataFormat(&c_dfDIKeyboard);
     dInputKeyboardDevice->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
     dInputKeyboardDevice->Acquire();
 
-    // Initialize the mouse device
-    hr = directInput->CreateDevice(GUID_SysMouse, &dInputMouseDevice, NULL);
+    // Initialize mouse device
+    hr = dInput->CreateDevice(GUID_SysMouse, &dInputMouseDevice, NULL);
     if (FAILED(hr)) {
-        std::cout << "Failed to create mouse device." << std::endl;
+        std::cout << "Failed to create mouse device. Error: " << hr << std::endl;
         return false;
     }
     dInputMouseDevice->SetDataFormat(&c_dfDIMouse);
@@ -83,8 +83,8 @@ void InputManager::cleanUp() {
         dInputMouseDevice->Release();
         dInputMouseDevice = nullptr;
     }
-    if (directInput) {
-        directInput->Release();
-        directInput = nullptr;
+    if (dInput) {
+        dInput->Release();
+        dInput = nullptr;
     }
 }

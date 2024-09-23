@@ -20,8 +20,6 @@ MainMenu::~MainMenu() {
 void MainMenu::Enter() {
     cout << "Entering Main Menu" << endl;
     loadTextures();
-    Update();
-    Render();
     
 }
 
@@ -49,13 +47,13 @@ void MainMenu::loadTextures() {
     }
     // Define the positions for the buttons dynamically based on the screen size
 
-    startButtonRect.left = 1280 / 2 - buttonWidth / 2;
-    startButtonRect.top = 720 / 2 - 100;
+    startButtonRect.left = 1000 / 2 - buttonWidth / 2;
+    startButtonRect.top = 600 / 2 - 100;
     startButtonRect.right = startButtonRect.left + buttonWidth;
     startButtonRect.bottom = startButtonRect.top + buttonHeight;
 
-    exitButtonRect.left = 1280 / 2 - buttonWidth / 2;
-    exitButtonRect.top = 720 / 2 + 60;
+    exitButtonRect.left = 1000 / 2 - buttonWidth / 2;
+    exitButtonRect.top = 600 / 2 + 60;
     exitButtonRect.right = exitButtonRect.left + buttonWidth;
     exitButtonRect.bottom = exitButtonRect.top + buttonHeight;
 }
@@ -126,7 +124,7 @@ void MainMenu::Render() {
 
 void MainMenu::Update() {
     // Get mouse position and check for button clicks
-    POINT cursorPos = inputManager->getMousePosition();
+    POINT cursorPos;
     GetCursorPos(&cursorPos);
     ScreenToClient(GetForegroundWindow(), &cursorPos);
 
@@ -134,9 +132,12 @@ void MainMenu::Update() {
     if (inputManager->isMouseButtonPressed(0)) {  // Left mouse button is index 0
         if (cursorPos.x >= startButtonRect.left && cursorPos.x <= startButtonRect.right &&
             cursorPos.y >= startButtonRect.top && cursorPos.y <= startButtonRect.bottom) {
-            // Handle Start Button
             std::cout << "Start button clicked" << std::endl;
-            // Transition to game state
+
+            // Transition to the next game state (e.g., GamePlayState)
+            // Assuming you have a GamePlayState class defined
+            /*GameState* gamePlayState = new GamePlayState();
+            gameStateManager->PushState(gamePlayState); */ // Push new game state
         }
 
         // Exit Button Clicked

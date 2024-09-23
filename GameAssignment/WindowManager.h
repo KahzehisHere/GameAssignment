@@ -18,20 +18,22 @@ private:
     int fullscreenWidth;
     int fullscreenHeight;
     bool isFullscreen;
+    HINSTANCE hInstance;
 
 
 public:
     WindowManager(int ScreenWidth = 1280, int ScreenHeight = 720, bool fullscreen = false, int fullscreenWidth = 1920, int fullscreenHeight = 1080);
     ~WindowManager();
 
-    LRESULT WindowProcedure(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+    static LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
     HWND createWindow(HINSTANCE hInstance);
-    bool windowIsRunning();
-    void cleanup(HINSTANCE hInstance);
+    //bool windowIsRunning();
+    void cleanup();
 
-    int getFullcreenWidth() const { return fullscreenWidth; }
+    int getFullscreenWidth() const { return fullscreenWidth; }  // Fixed typo
     int getFullscreenHeight() const { return fullscreenHeight; }
     int getWidth() const { return windowWidth; }
     int getHeight() const { return windowHeight; }
     HWND getHWND() const { return g_hWnd; }
+    HINSTANCE getInstance() const { return hInstance; }
 };

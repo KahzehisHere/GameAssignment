@@ -7,7 +7,7 @@ class GraphicDevice {
 public:
     WindowManager windowManager;
     HWND hwnd = windowManager.getHWND();
-    GraphicDevice(int width, int height);  // Constructor with screen dimensions
+    GraphicDevice();  // Constructor with screen dimensions
     IDirect3DDevice9* createDevice(HWND hWnd);  // Creates the device with the provided HWND
     void cleanup();
     int getScreenWidth() {

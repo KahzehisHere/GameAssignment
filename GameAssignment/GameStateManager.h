@@ -1,33 +1,28 @@
-#pragma once
-#include "MainMenu.h"
-#include "LoadingScreen.h"
-#include "InputManager.h"
-#include "Game.h"
-#include "AudioManager.h"
+#ifndef GAMESTATEMANAGER_H
+#define GAMESTATEMANAGER_H
 
-enum GameState {
-    MAIN_MENU,
-    PLAYING,
-    LOADING_SCREEN,
-    GAME_OVER
-};
+#include <stack>
+#include "GameState.h"
 
 class GameStateManager {
 public:
     GameStateManager();
     ~GameStateManager();
 
-    void changeState(GameState newState);
-    void update();
-    void render();
+    // Manage states
+    void PushState(GameState* state);       // Push a new state onto the stack
+    void PopState();                        // Pop the current state from the stack
+    void ChangeState(GameState* state);     // Change the current state
+
+    // Game loop functions
+    void Update();                          // Update the current state
+    void Render();                          // Render the current state
+
+    bool IsEmpty() const;                   // Check if the stack is empty
 
 private:
-    GameState currentState;
-    MainMenu* mainMenu;
-    LoadingScreen* loadingScreen;
-    Game* game;
-    InputManager* inputManager;
-    HRESULT hr;
-    LPD3DXSPRITE sprite;
-    float deltaTime;
+    void CleanupCurrentState();             // Helper function to cleanup current state
+    std::stack<GameState*> stateStack;      // Stack to hold the game states
 };
+
+#endif // GAMESTATEMANAGER_H

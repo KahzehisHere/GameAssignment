@@ -6,15 +6,15 @@ void Frametime::init(int fps) {
     QueryPerformanceCounter(&timePrevious);
 
     requestedFPS = fps;
-    intervalsPerFrame = timerFreq.QuadPart / requestedFPS;
+    intervalsPerFrame = static_cast<float>(timerFreq.QuadPart) / static_cast<float>(requestedFPS);  // Ensure accurate division
 }
 
 int Frametime::FramesToUpdate() {
     int framesToUpdate = 0;
     QueryPerformanceCounter(&timeNow);
 
-    intervalsSinceLastUpdate = timeNow.QuadPart - timePrevious.QuadPart;
-    framesToUpdate = (int)(intervalsSinceLastUpdate / intervalsPerFrame);
+    intervalsSinceLastUpdate = static_cast<float>(timeNow.QuadPart - timePrevious.QuadPart);
+    framesToUpdate = static_cast<int>(intervalsSinceLastUpdate / intervalsPerFrame);
 
     if (framesToUpdate != 0) {
         QueryPerformanceCounter(&timePrevious);

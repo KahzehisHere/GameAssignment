@@ -156,6 +156,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameCharacter.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameState.h" />
     <ClInclude Include="GameStateManager.h" />
     <ClInclude Include="GraphicDevice.h" />
     <ClInclude Include="InputManager.h" />

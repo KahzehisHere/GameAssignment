@@ -1,57 +1,55 @@
 #include "GameStateManager.h"
-#include "AudioManager.h"
 
-GameStateManager::GameStateManager() {
-    currentState = MAIN_MENU;  // Start with the main menu
-    mainMenu = new MainMenu();
-    loadingScreen = new LoadingScreen();
-    game = new Game();
-}
+GameStateManager::GameStateManager() {}
 
 GameStateManager::~GameStateManager() {
-    delete mainMenu;
-    delete loadingScreen;
-    delete game;
-}
-
-void GameStateManager::changeState(GameState newState) {
-    currentState = newState;
-}
-
-void GameStateManager::update() {
-    switch (currentState) {
-    case MAIN_MENU:
-        mainMenu->update(inputManager);
-        break;
-    case PLAYING:
-        game->Logic(deltaTime, AudioManager & audioManager);
-        game->update();
-        game->updateAnimation(deltaTime);
-        break;
-    case LOADING_SCREEN:
-        loadingScreen->render();
-        break;
-    case GAME_OVER:
-        // Handle game over update logic here
-        break;
+    // Cleanup all remaining states
+    while (!stateStack.empty()) {
+        CleanupCurrentState();
     }
 }
 
-void GameStateManager::render() {
-    switch (currentState) {
-    case MAIN_MENU:
-        mainMenu->loadTextures();
-        mainMenu->display();
-        break;
-    case PLAYING:
-        game->render(hr, sprite);
-        break;
-    case LOADING_SCREEN:
-        loadingScreen->loadResources();
+void GameStateManager::PushState(GameState* state) {
+    stateStack.push(state);
+    state->Enter();  // Call the state's Enter method
+}
 
-        break;
-    case GAME_OVER:
-        // Handle game over rendering here
-        break;
+void GameStateManager::PopState() {
+    if (!stateStack.empty()) {
+        CleanupCurrentState();  // Cleanup the current state
+        stateStack.pop();       // Pop the state off the stack
+    }
+}
+
+void GameStateManager::ChangeState(GameState* state) {
+    if (!stateStack.empty()) {
+        CleanupCurrentState();  // Clean up current state before changing
+        stateStack.pop();       // Pop the current state
+    }
+    PushState(state);           // Push the new state
+}
+
+void GameStateManager::Update() {
+    if (!stateStack.empty()) {
+        stateStack.top()->Update();  // Update the current state
+    }
+}
+
+void GameStateManager::Render() {
+    if (!stateStack.empty()) {
+        stateStack.top()->Render();  // Render the current state
+    }
+}
+
+bool GameStateManager::IsEmpty() const {
+    return stateStack.empty();  // Check if the state stack is empty
+}
+
+void GameStateManager::CleanupCurrentState() {
+    // Cleanup the current state safely
+    if (!stateStack.empty()) {
+        stateStack.top()->Exit();    // Call the state's Exit method
+        delete stateStack.top();     // Delete the state
+        stateStack.pop();            // Pop the state from the stack
     }
 }

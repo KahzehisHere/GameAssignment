@@ -20,6 +20,9 @@ MainMenu::~MainMenu() {
 void MainMenu::Enter() {
     cout << "Entering Main Menu" << endl;
     loadTextures();
+    Update();
+    Render();
+    
 }
 
 void MainMenu::Exit() {
@@ -27,16 +30,20 @@ void MainMenu::Exit() {
 }
 
 void MainMenu::loadTextures() {
+    HRESULT hr = D3DXCreateTextureFromFile(d3dDevice, "main_menu_background.png", &mainMenuBackground);
     // Load textures for the menu background, start, and exit buttons
     if (FAILED(D3DXCreateTextureFromFile(d3dDevice, "main_menu_background.png", &mainMenuBackground))) {
         cout << "Failed to load main menu background texture" << endl;
     }
+    hr = D3DXCreateTextureFromFile(d3dDevice, "startbutton.png", &startButtonTexture);
     if (FAILED(D3DXCreateTextureFromFile(d3dDevice, "startbutton.png", &startButtonTexture))) {
         cout << "Failed to load start button texture" << endl;
     }
+    hr = D3DXCreateTextureFromFile(d3dDevice, "exitbutton.png", &exitButtonTexture);
     if (FAILED(D3DXCreateTextureFromFile(d3dDevice, "exitbutton.png", &exitButtonTexture))) {
         cout << "Failed to load exit button texture" << endl;
     }
+    hr = D3DXCreateTextureFromFile(d3dDevice, "pointer.png", &pointer);
     if (FAILED(D3DXCreateTextureFromFile(d3dDevice, "pointer.png", &pointer))){
         cout << "Failed to load cursor texture" << endl;
     }

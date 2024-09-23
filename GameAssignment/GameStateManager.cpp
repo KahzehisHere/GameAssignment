@@ -11,13 +11,13 @@ GameStateManager::~GameStateManager() {
 
 void GameStateManager::PushState(GameState* state) {
     stateStack.push(state);
-    state->Enter();  // Call the state's Enter method
+    state->Enter();  
 }
 
 void GameStateManager::PopState() {
     if (!stateStack.empty()) {
-        CleanupCurrentState();  // Cleanup the current state
-        stateStack.pop();       // Pop the state off the stack
+        CleanupCurrentState();  
+        stateStack.pop();       
     }
 }
 

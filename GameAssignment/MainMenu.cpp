@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 
+
 D3DXVECTOR3 cursorPos (640.0f, 360.0f, 0.0f);
 using namespace std;
 

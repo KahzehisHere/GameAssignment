@@ -27,7 +27,7 @@ public:
     WindowManager(int ScreenWidth = 1280, int ScreenHeight = 720, bool fullscreen = false, int fullscreenWidth = 1920, int fullscreenHeight = 1080);
     ~WindowManager();
 
-    static LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+    static LRESULT CALLBACK WindowProcedure(HWND g_hWnd, UINT message, WPARAM wParam, LPARAM lParam);
     HWND createWindow(HINSTANCE hInstance);
     //bool windowIsRunning();
     void cleanup();
@@ -36,7 +36,7 @@ public:
     int getFullscreenHeight() const { return fullscreenHeight; }
     int getWidth() const { return windowWidth; }
     int getHeight() const { return windowHeight; }
-    HWND getHWND() const { return g_hWnd; }
+    HWND getHWND() const;
     HINSTANCE getInstance() const { return hInstance; }
 };
 

@@ -6,34 +6,34 @@
 
 using namespace std;
 
-WindowManager::WindowManager(int ScreenWidth, int ScreenHeight, bool fullscreen, int fullWidth, int fullHeight) {
-    windowWidth = ScreenWidth;
-    windowHeight = ScreenHeight;
-    isFullscreen = fullscreen;
-    fullscreenWidth = fullWidth;
-    fullscreenHeight = fullHeight;
+WindowManager::WindowManager(int ScreenWidth, int ScreenHeight, bool fullscreen, int fullWidth, int fullHeight)
+    : g_hWnd(nullptr), hInstance(nullptr), windowWidth(ScreenWidth), windowHeight(ScreenHeight),
+    isFullscreen(fullscreen), fullscreenWidth(fullWidth), fullscreenHeight(fullHeight), msg{}, wndClass{} {
+    // Constructor body
 }
 
 WindowManager::~WindowManager() {
     // Destructor
 }
 
-LRESULT CALLBACK WindowManager::WindowProcedure(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK WindowManager::WindowProcedure(HWND g_hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
     default:
-        return DefWindowProc(hWnd, message, wParam, lParam);
+        return DefWindowProc(g_hWnd, message, wParam, lParam);
     }
     return 0;
 }
 
 HWND WindowManager::createWindow(HINSTANCE hInstance) {
+    this->hInstance = hInstance; 
+
     ZeroMemory(&wndClass, sizeof(wndClass));
     wndClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
     wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wndClass.hInstance = hInstance; 
+    wndClass.hInstance = hInstance;
     wndClass.lpfnWndProc = WindowProcedure;
     wndClass.lpszClassName = "MainWindowClass";
     wndClass.style = CS_HREDRAW | CS_VREDRAW;
@@ -43,16 +43,17 @@ HWND WindowManager::createWindow(HINSTANCE hInstance) {
         return NULL;
     }
 
-    DWORD style = isFullscreen ? WS_POPUP : WS_OVERLAPPEDWINDOW;  // Choose window style
+    DWORD style = WS_OVERLAPPEDWINDOW;  // Test with basic window style
 
     g_hWnd = CreateWindowEx(0, wndClass.lpszClassName, "ADAM's Apple", style, 0, 0, windowWidth, windowHeight, NULL, NULL, hInstance, NULL);
-    if (!g_hWnd) {
-        MessageBox(NULL, "Failed to create window", "Error", MB_OK);
-        return NULL;
-    }
+    
 
     ShowWindow(g_hWnd, SW_SHOWDEFAULT);
     return g_hWnd;
+}
+
+HWND WindowManager::getHWND() const {
+    return g_hWnd; 
 }
 
 //Redudant because we are using game state manager 

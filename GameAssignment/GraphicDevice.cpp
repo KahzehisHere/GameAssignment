@@ -1,7 +1,5 @@
 #include "GraphicDevice.h"
-
-
-HWND hwnd = windowManager->getHWND();
+#include "WindowManager.h"
 
 // Constructor
 GraphicDevice::GraphicDevice(){}
@@ -19,7 +17,9 @@ void GraphicDevice::cleanup() {
 }
 
 // Function to create the Direct3D device
-IDirect3DDevice9* GraphicDevice::createDevice(HWND hWnd) {
+IDirect3DDevice9* GraphicDevice::createDevice() {
+    HWND hWnd = windowManager->getHWND();
+
     if (d3dDevice || direct3D9) {
         cleanup();  // Ensure we release any existing resources before reallocation
     }

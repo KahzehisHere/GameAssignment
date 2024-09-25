@@ -1,10 +1,17 @@
 #include "GraphicDevice.h"
 #include "WindowManager.h"
+#include <iostream>
 
-// Constructor
-GraphicDevice::GraphicDevice(){}
+// Private constructor to enforce singleton
+GraphicDevice::GraphicDevice() : d3dDevice(nullptr), direct3D9(nullptr) {}
 
-// Clean up the device
+// Destructor
+GraphicDevice::~GraphicDevice() {
+    cleanup();
+}
+
+
+// Cleanup the device
 void GraphicDevice::cleanup() {
     if (d3dDevice) {
         d3dDevice->Release();
@@ -16,9 +23,15 @@ void GraphicDevice::cleanup() {
     }
 }
 
+// Singleton instance getter
+GraphicDevice& GraphicDevice::getInstance() {
+    static GraphicDevice instance;
+    return instance;
+}
+
 // Function to create the Direct3D device
-IDirect3DDevice9* GraphicDevice::createDevice() {
-    HWND hWnd = windowManager->getHWND();
+IDirect3DDevice9* GraphicDevice::createDevice(HWND hWnd) {
+    WindowManager& windowManager = WindowManager::getWindowManager();
 
     if (d3dDevice || direct3D9) {
         cleanup();  // Ensure we release any existing resources before reallocation
@@ -35,6 +48,10 @@ IDirect3DDevice9* GraphicDevice::createDevice() {
     d3dPP.Windowed = true;
     d3dPP.SwapEffect = D3DSWAPEFFECT_DISCARD;
     d3dPP.BackBufferFormat = D3DFMT_X8R8G8B8;
+
+    // Retrieve the window width and height from WindowManager
+    int screenWidth = windowManager.getWidth();
+    int screenHeight = windowManager.getHeight();
 
     // Check if screenWidth and screenHeight are valid
     if (screenWidth <= 0 || screenHeight <= 0) {

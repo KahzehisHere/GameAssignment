@@ -6,9 +6,9 @@
 
 class GameStateManager {
 public:
-    GameStateManager();
     ~GameStateManager();
 
+    static GameStateManager& getInstance();
     // Manage states
     void PushState(GameState* state);       // Push a new state onto the stack
     void PopState();                        // Pop the current state from the stack
@@ -19,10 +19,14 @@ public:
     void Render();                          // Render the current state
 
     bool IsEmpty() const;                   // Check if the stack is empty
+    void CleanupCurrentState();             // Helper function to cleanup current state
 
 private:
-    void CleanupCurrentState();             // Helper function to cleanup current state
     std::stack<GameState*> stateStack;      // Stack to hold the game states
+    GameStateManager();
+
+    GameStateManager(const GameStateManager&) = delete;
+    GameStateManager& operator=(const GameStateManager&) = delete;
 };
 
 #endif // GAMESTATEMANAGER_H

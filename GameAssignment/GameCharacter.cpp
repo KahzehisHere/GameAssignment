@@ -1,15 +1,24 @@
 //#include "GameCharacter.h"
 //
-//GameCharacter::GameCharacter(LPDIRECT3DTEXTURE9 tex, int texWidth, int texHeight, int cols, int rows)
-//    : militiaTexture(nullptr), gorkTexture(nullptr), sprite(nullptr), line(nullptr), font(nullptr) {}
+//GameCharacter::GameCharacter() {
+//
+//}
 //
 //GameCharacter::~GameCharacter() {
 //    if (militiaTexture) militiaTexture->Release();
 //    if (gorkTexture) gorkTexture->Release();
 //    if (font) font->Release();
 //}
-//    
+//
+//GameCharacter& GameCharacter::getInstance() {
+//    static GameCharacter instance;  // Static instance for singleton
+//    return instance;
+//}
+//
 //void GameCharacter::render(HRESULT hr, LPD3DXSPRITE sprite) {
+//    GraphicDevice& device = GraphicDevice::getInstance();
+//    d3dDevice = device.getDirectDevice();
+//    
 //    hr = D3DXCreateSprite(d3dDevice, &sprite);
 //    if (FAILED(hr)) {
 //        cout << "Failed to create sprite" << endl;

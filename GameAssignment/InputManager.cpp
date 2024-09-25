@@ -3,8 +3,10 @@
 #include "InputManager.h"
 #include <iostream>
 
-InputManager::InputManager() {}
+// Private constructor to enforce singleton
+InputManager::InputManager() : dInput(nullptr), dInputKeyboardDevice(nullptr), dInputMouseDevice(nullptr){}
 
+// Destructor
 InputManager::~InputManager() {
     cleanUp();
 }
@@ -15,7 +17,7 @@ float InputManager::clamp(float value, float min, float max) {
     return value;
 }
 
-bool InputManager::initialize(HINSTANCE hInstance, HWND hwnd) {
+bool InputManager::initialize(HINSTANCE hInstance, HWND hWnd) {
     HRESULT hr = DirectInput8Create(GetModuleHandle(NULL), 0x0800, IID_IDirectInput8, (void**)&dInput, NULL);
     if (FAILED(hr)) {
         std::cout << "Failed to create DirectInput object. Error: " << hr << std::endl;
@@ -29,7 +31,7 @@ bool InputManager::initialize(HINSTANCE hInstance, HWND hwnd) {
         return false;
     }
     dInputKeyboardDevice->SetDataFormat(&c_dfDIKeyboard);
-    dInputKeyboardDevice->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+    dInputKeyboardDevice->SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
     dInputKeyboardDevice->Acquire();
 
     // Initialize mouse device
@@ -39,27 +41,35 @@ bool InputManager::initialize(HINSTANCE hInstance, HWND hwnd) {
         return false;
     }
     dInputMouseDevice->SetDataFormat(&c_dfDIMouse);
-    dInputMouseDevice->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+    dInputMouseDevice->SetCooperativeLevel(hWnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
     dInputMouseDevice->Acquire();
 
     return true;
 }
 
+InputManager& InputManager::getInstance() {
+    static InputManager instance;  // Static instance for singleton
+    return instance;
+}
+
+
 void InputManager::getInput() {
     // Get immediate Keyboard and Mouse Data
     dInputKeyboardDevice->GetDeviceState(256, diKeys);
-    dInputMouseDevice->GetDeviceState(sizeof(DIMOUSESTATE), &mouse_state);
+    dInputMouseDevice->GetDeviceState(sizeof(DIMOUSESTATE), (LPVOID)&mouse_state);
 
     // Update the cursor position based on mouse movement
     cursorPos.x += mouse_state.lX;
     cursorPos.y += mouse_state.lY;
 
-    // Clamp the cursor position within screen boundaries
-    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+    // Get window bounds from the WindowManager
+    WindowManager& windowManager = WindowManager::getWindowManager();
+    int windowWidth = windowManager.getWidth();
+    int windowHeight = windowManager.getHeight();
 
-    cursorPos.x = static_cast<LONG>(clamp(static_cast<float>(cursorPos.x), 0.0f, static_cast<float>(screenWidth - 32)));
-    cursorPos.y = static_cast<LONG>(clamp(static_cast<float>(cursorPos.y), 0.0f, static_cast<float>(screenHeight - 32)));
+    // Keep the cursor within the screen boundaries
+    cursorPos.x = clamp(cursorPos.x, 0.0f, (float)windowWidth - 32);  // Assuming 32x32 cursor size
+    cursorPos.y = clamp(cursorPos.y, 0.0f, (float)windowHeight - 32); // Assuming 32x32 cursor size
 }
 
 bool InputManager::isMouseOverButton(RECT buttonRect) {
@@ -69,6 +79,25 @@ bool InputManager::isMouseOverButton(RECT buttonRect) {
 
 bool InputManager::isMouseButtonPressed(int button) {
     return (mouse_state.rgbButtons[button] & 0x80) != 0;
+}
+
+bool InputManager::isKeyPressed(int key) {
+    return (diKeys[key] & 0x80) != 0;
+}
+
+HRESULT InputManager::getMouseState(DIMOUSESTATE* mouseState) {
+    if (dInputMouseDevice) {
+        // Get the current state of the mouse
+        HRESULT hr = dInputMouseDevice->GetDeviceState(sizeof(DIMOUSESTATE), (LPVOID)mouseState);
+        if (FAILED(hr)) {
+            // If the device is lost, try to re-acquire it
+            if (hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED) {
+                dInputMouseDevice->Acquire();
+            }
+        }
+        return hr;
+    }
+    return E_FAIL;
 }
 
 void InputManager::cleanUp() {

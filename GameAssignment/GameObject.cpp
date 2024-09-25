@@ -1,9 +1,13 @@
 //#include "GameObject.h"
 //#include "WindowManager.h"
+//#include "GraphicDevice.h"
 //#include <string>
 //
-//GameObject::GameObject(HRESULT hr, LPD3DXLINE line, D3DXVECTOR3 platformPositions[4], RECT platformBoundingBoxes[4], RECT ladderBoundingBox, RECT ladderBoundingBoxRight)
-//    : platformTexture(nullptr), ladderTexture(nullptr), appleTexture(nullptr), font(nullptr) {}
+//GameObject::GameObject() {
+//    
+//}
+//
+//GameObject::GameObject() {}
 //
 //GameObject::~GameObject() {
 //    if (platformTexture) platformTexture->Release();
@@ -12,25 +16,35 @@
 //    if (font) font->Release();
 //}
 //
-//D3DXVECTOR3 platformPositions[4] = {
-//    D3DXVECTOR3(600.0f, 425.0f, 0.0f),
-//    D3DXVECTOR3(0.0f, 300.0f, 0.0f),
-//    D3DXVECTOR3(800.0f, 150.0f, 0.0f),
-//    D3DXVECTOR3(230.0f, 100.0f, 0.0f),
-//};
-//
-//D3DXVECTOR2 lines[5]; // 4 lines, but need 5 points to close the rectangle
+////D3DXVECTOR2 lines[5]; // 4 lines, but need 5 points to close the rectangle
 //HRESULT hr;
-//GraphicDevice* device;
-//IDirect3DDevice9* d3dDevice = device->getDirectDevice();
-//
-//WindowManager* window;
-//int windowScreenHeight = window->getHeight();
-//int windowScreenWidth = window->getWidth();
 //
 //
-//void GameObject::render(HRESULT hr, LPD3DXSPRITE sprite, LPD3DXLINE line ) {
-//    hr = D3DXCreateSprite(d3dDevice, &sprite);
+//
+//void GameObject::render() {
+//    WindowManager& windowManager = WindowManager::getWindowManager();
+//    HWND hWnd = windowManager.getHWND();
+//    GraphicDevice& device = GraphicDevice::getInstance();  // Use singleton for GraphicDevice
+//
+//    // Ensure the Direct3D device is initialized
+//    if (!d3dDevice) {
+//        if (!device.createDevice(hWnd)) {
+//            std::cout << "Failed to create Direct3D device!" << std::endl;
+//            return;
+//        }
+//        d3dDevice = device.getDirectDevice();
+//    }
+//
+//    // Check if d3dDevice is properly initialized
+//    if (!d3dDevice) {
+//        std::cout << "Direct3D device is still null after initialization!" << std::endl;
+//        return;
+//    }
+//
+//    windowScreenWidth = windowManager.getWidth();
+//    windowScreenHeight = windowManager.getHeight();
+//
+//    HRESULT hr = D3DXCreateSprite(d3dDevice, &sprite);
 //    if (FAILED(hr)) {
 //        cout << "Failed to create sprite" << endl;
 //    }
@@ -132,7 +146,7 @@
 //        sprite->End();  // End sprite rendering
 //    }
 //
-//    drawPlatformBoundingBoxes(hr, line, platformPositions, platformBoundingBoxes, ladderBoundingBox, ladderBoundingBoxRight);
+//    drawPlatformBoundingBoxes();
 //
 //    if (font) {
 //        RECT appleCountRect;
@@ -167,7 +181,7 @@
 //}
 //
 //
-//void GameObject::drawPlatformBoundingBoxes(HRESULT hr, LPD3DXLINE line, D3DXVECTOR3 platformPositions[4], RECT platformBoundingBoxes[4], RECT ladderBoundingBox, RECT ladderBoundingBoxRight) {
+//void GameObject::drawPlatformBoundingBoxes() {
 //
 //    if (line) {
 //        

@@ -136,8 +136,6 @@
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Frametime.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameCharacter.cpp" />
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameStateManager.cpp" />
     <ClCompile Include="GraphicDevice.cpp" />
     <ClCompile Include="InputManager.cpp" />
@@ -154,8 +152,6 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Frametime.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="GameCharacter.h" />
-    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="GameStateManager.h" />
     <ClInclude Include="GraphicDevice.h" />

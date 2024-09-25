@@ -5,34 +5,30 @@
 //
 //class GameObject {
 //public:
-//    GameObject(HRESULT hr, LPD3DXLINE line, D3DXVECTOR3 platformPositions[4], RECT platformBoundingBoxes[4], RECT ladderBoundingBox, RECT ladderBoundingBoxRight);
+//    GameObject();
 //    ~GameObject();
-//    void render(HRESULT hr, LPD3DXSPRITE sprite, LPD3DXLINE line);
-//    void drawPlatformBoundingBoxes(HRESULT hr, LPD3DXLINE line, D3DXVECTOR3 platformPositions[4], RECT platformBoundingBoxes[4], RECT ladderBoundingBox, RECT ladderBoundingBoxRight);
+//    void render();
+//    void drawPlatformBoundingBoxes();
 //    
 //   
 //private:
-//    WindowManager* window;
-//    int windowScreenHeight;
-//    int windowScreenWidth;
-//
-//    GraphicDevice* device;
-//    IDirect3DDevice9* d3dDevice = device->getDirectDevice();
-//    LPD3DXLINE line;
+//    LPD3DXLINE line = nullptr;
 //    HRESULT hr;
-//    LPD3DXSPRITE sprite;
-//    LPD3DXFONT font;
-//
-//    LPDIRECT3DTEXTURE9 platformTexture;
+//    LPD3DXSPRITE sprite = nullptr;
+//    LPD3DXFONT font = nullptr;
+//    LPDIRECT3DDEVICE9 d3dDevice = nullptr;
+//    LPDIRECT3DTEXTURE9 platformTexture = nullptr;
 //    RECT platformBoundingBoxes[4];
 //    D3DXVECTOR3 platformPositions[4];
 //
-//    LPDIRECT3DTEXTURE9 ladderTexture;
+//    LPDIRECT3DTEXTURE9 ladderTexture = nullptr;
 //    RECT ladderBoundingBox;
 //    RECT ladderBoundingBoxRight;
 //
 //    D3DXVECTOR3 applePositions[3];
 //    bool applesCollected[3] = { false, false, false };  // Tracks whether each apple has been collected
 //    int collectedApples = 0;  // Number of apples collected by the player
-//    LPDIRECT3DTEXTURE9 appleTexture;
+//    int windowScreenWidth;
+//    int windowScreenHeight;
+//    LPDIRECT3DTEXTURE9 appleTexture = nullptr;
 //};

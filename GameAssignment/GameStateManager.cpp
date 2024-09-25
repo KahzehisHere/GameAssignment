@@ -9,6 +9,11 @@ GameStateManager::~GameStateManager() {
     }
 }
 
+GameStateManager& GameStateManager::getInstance() {
+    static GameStateManager instance;
+    return instance;
+}
+
 void GameStateManager::PushState(GameState* state) {
     stateStack.push(state);
     state->Enter();  
@@ -16,15 +21,13 @@ void GameStateManager::PushState(GameState* state) {
 
 void GameStateManager::PopState() {
     if (!stateStack.empty()) {
-        CleanupCurrentState();  
-        stateStack.pop();       
+        CleanupCurrentState();
     }
 }
 
 void GameStateManager::ChangeState(GameState* state) {
     if (!stateStack.empty()) {
-        CleanupCurrentState();  // Clean up current state before changing
-        stateStack.pop();       // Pop the current state
+        CleanupCurrentState();
     }
     PushState(state);           // Push the new state
 }

@@ -15,31 +15,38 @@ private:
     HWND g_hWnd;
     WNDCLASS wndClass;
     MSG msg;
-    int windowWidth;
-    int windowHeight;
-    int fullscreenWidth;
-    int fullscreenHeight;
+    int windowWidth = 1280;
+    int windowHeight = 720;
+    int fullscreenWidth = 1920;
+    int fullscreenHeight = 1080;
     bool isFullscreen;
     HINSTANCE hInstance;
-
-
-public:
-    WindowManager(int ScreenWidth = 1280, int ScreenHeight = 720, bool fullscreen = false, int fullscreenWidth = 1920, int fullscreenHeight = 1080);
-    ~WindowManager();
-
     static LRESULT CALLBACK WindowProcedure(HWND g_hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+    WindowManager(int ScreenWidth = 1280, int ScreenHeight = 720, bool fullscreen = false, int fullscreenWidth = 1920, int fullscreenHeight = 1080);
+   
+    WindowManager(const WindowManager&) = delete;
+    void operator=(const WindowManager&) = delete;
+public:
+    
+    ~WindowManager();
+    
     HWND createWindow(HINSTANCE hInstance);
     //bool windowIsRunning();
     void cleanup();
-
-    int getFullscreenWidth() const { return fullscreenWidth; }  // Fixed typo
-    int getFullscreenHeight() const { return fullscreenHeight; }
-    int getWidth() const { return windowWidth; }
-    int getHeight() const { return windowHeight; }
+    int getFullscreenWidth() const;  // Fixed typo
+    int getFullscreenHeight() const;
+    int getWidth() const;
+    int getHeight() const;
     HWND getHWND() const;
-    HINSTANCE getInstance() const { return hInstance; }
-};
 
-extern WindowManager* windowManager;
+    // Get singleton instance of WindowManager
+    static WindowManager& getWindowManager(int ScreenWidth = 800, int ScreenHeight = 600, bool fullscreen = false, int fullWidth = 1920, int fullHeight = 1080) {
+        static WindowManager instance(ScreenWidth, ScreenHeight, fullscreen, fullWidth, fullHeight);
+        return instance;
+    }
+
+    // Getter for HINSTANCE
+    HINSTANCE getInstanceHandle() const { return hInstance; }
+};
 
 #endif

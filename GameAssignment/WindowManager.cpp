@@ -2,7 +2,6 @@
 #include <dinput.h>
 #include "WindowManager.h"
 #include "InputManager.h"
-#include "GraphicDevice.h"
 
 using namespace std;
 
@@ -43,6 +42,9 @@ HWND WindowManager::createWindow(HINSTANCE hInstance) {
         return NULL;
     }
 
+    windowWidth = 1280;
+    windowHeight = 720;
+
     DWORD style = WS_OVERLAPPEDWINDOW;  // Test with basic window style
 
     g_hWnd = CreateWindowEx(0, wndClass.lpszClassName, "ADAM's Apple", style, 0, 0, windowWidth, windowHeight, NULL, NULL, hInstance, NULL);
@@ -66,6 +68,18 @@ HWND WindowManager::getHWND() const {
     return true;
 }*/
 
+int WindowManager::getFullscreenWidth() const { return fullscreenWidth; }  // Fixed typo
+
+int WindowManager::getFullscreenHeight() const { return fullscreenHeight; }
+
+int WindowManager::getWidth() const { return windowWidth; }
+
+int WindowManager::getHeight() const { return windowHeight; }
+
 void WindowManager::cleanup( ) {
+    if (g_hWnd) {
+        DestroyWindow(g_hWnd);
+        g_hWnd = nullptr;
+    }
     UnregisterClass(wndClass.lpszClassName, hInstance);
 }

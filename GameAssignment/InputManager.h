@@ -9,29 +9,32 @@
 
 class InputManager {
 public:
-    InputManager();
     ~InputManager();
 
-    bool initialize(HINSTANCE hInstance, HWND hwnd);
+    static InputManager& getInstance();  // Singleton instance getter
+    bool initialize(HINSTANCE hInstance, HWND hWnd);
+    void cleanUp();
+    bool isMouseButtonPressed(int button);
+    bool isKeyPressed(int key);
+    HRESULT getMouseState(DIMOUSESTATE* mouseState);
     void getInput();  // Polls input devices
     bool isMouseOverButton(RECT buttonRect);  // Checks if a specific key is pressed
-    bool isMouseButtonPressed(int button);  // Checks if a specific mouse button is pressed
-    BYTE  diKeys[256];
-    void cleanUp();
     POINT getMousePosition() {
         return cursorPos;
     }
 
 private:
-    LPDIRECTINPUT8 dInput;
-    LPDIRECTINPUTDEVICE8  dInputKeyboardDevice;
-    LPDIRECTINPUTDEVICE8  dInputMouseDevice;
+    BYTE  diKeys[256];
+    LPDIRECTINPUT8 dInput = nullptr;
+    LPDIRECTINPUTDEVICE8 dInputKeyboardDevice = nullptr;
+    LPDIRECTINPUTDEVICE8 dInputMouseDevice = nullptr;
     DIMOUSESTATE mouse_state;
     POINT cursorPos;
     float clamp(float value, float min, float max);
+    InputManager();
+    // Deleted copy constructor and assignment operator
+    InputManager(const InputManager&) = delete;
+    InputManager& operator=(const InputManager&) = delete;
 };
-
-
-extern InputManager* inputManager;
 
 #endif

@@ -2,6 +2,9 @@
 #include <dinput.h>
 #include "MainMenu.h"
 #include "WindowManager.h"
+#include "LoadingScreen.h"
+#include "GameStateManager.h"
+#include "Game.h"
 #include <string>
 #include <iostream>
 
@@ -21,6 +24,9 @@ MainMenu::~MainMenu() {
 
 void MainMenu::Enter() {
     cout << "Entering Main Menu" << endl;
+    GraphicDevice& device = GraphicDevice::getInstance();
+    d3dDevice = device.getDirectDevice();
+    cursorPos = D3DXVECTOR3(640.0f, 360.0f, 0.0f);
     loadTextures();
     
 }
@@ -57,10 +63,19 @@ void MainMenu::loadTextures() {
         DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, DEFAULT_QUALITY,
         DEFAULT_PITCH | FF_DONTCARE, "Arial", &font);
 
-    // Define the positions for the buttons dynamically based on the screen size
+    
+}
 
-    startButtonRect.left = windowManager->getWidth() / 2 - buttonWidth / 2;
-    startButtonRect.top = windowManager->getHeight() / 2 - 100;
+void MainMenu::Render() {
+    // Render the menu screen
+    LPD3DXSPRITE sprite = nullptr;
+
+    // Define the positions for the buttons dynamically based on the screen size
+    WindowManager& wm = WindowManager::getWindowManager();  // Global pointer usage
+    int width = wm.getWidth();
+    int height = wm.getHeight();
+    startButtonRect.left = width / 2 - buttonWidth / 2;
+    startButtonRect.top = height / 2 - 100;
     startButtonRect.right = startButtonRect.left + buttonWidth;
     startButtonRect.bottom = startButtonRect.top + buttonHeight;
 
@@ -68,11 +83,6 @@ void MainMenu::loadTextures() {
     exitButtonRect.top = 720 / 2 + 60;
     exitButtonRect.right = exitButtonRect.left + buttonWidth;
     exitButtonRect.bottom = exitButtonRect.top + buttonHeight;
-}
-
-void MainMenu::Render() {
-    // Render the menu screen
-    LPD3DXSPRITE sprite = nullptr;
 
     // Ensure sprite creation is successful
     if (FAILED(D3DXCreateSprite(d3dDevice, &sprite))) {
@@ -108,69 +118,80 @@ void MainMenu::Render() {
 
     // Draw start button
     if (startButtonTexture) {
-        // Calculate the center position of the button rectangle
-        float centerX = static_cast<float>(startButtonRect.left + buttonWidth / 2);
-        float centerY = static_cast<float>(startButtonRect.top + buttonHeight / 2);
+        // Calculate the center position of the button rect
+        float startButtonCenterX = (startButtonRect.left + startButtonRect.right) / 2.0f;
+        float startButtonCenterY = (startButtonRect.top + startButtonRect.bottom) / 2.0f;
 
-        // Adjust the position to draw the sprite centered on the button
-        D3DXVECTOR3 startButtonPos(centerX - (buttonWidth / 2), centerY - (buttonHeight / 2), 0.0f);
+        // Assume the sprite's width and height are half the rect size, adjust if needed
+        D3DSURFACE_DESC buttonDesc;
+        startButtonTexture->GetLevelDesc(0, &buttonDesc);
+
+        float buttonWidth = buttonDesc.Width;
+        float buttonHeight = buttonDesc.Height;
+
+        // Adjust the position to center the sprite
+        D3DXVECTOR3 startButtonPos(startButtonCenterX - buttonWidth / 2.0f, startButtonCenterY - buttonHeight / 2.0f, 0.0f);
         sprite->Draw(startButtonTexture, NULL, NULL, &startButtonPos, D3DCOLOR_XRGB(255, 255, 255));
     }
 
     // Draw exit button
     if (exitButtonTexture) {
-        // Calculate the center position of the button rectangle
-        float centerX = static_cast<float>(exitButtonRect.left + buttonWidth / 2);
-        float centerY = static_cast<float>(exitButtonRect.top + buttonHeight / 2);
+        float exitButtonCenterX = (exitButtonRect.left + exitButtonRect.right) / 2.0f;
+        float exitButtonCenterY = (exitButtonRect.top + exitButtonRect.bottom) / 2.0f;
 
-        // Adjust the position to draw the sprite centered on the button
-        D3DXVECTOR3 exitButtonPos(centerX - (buttonWidth / 2), centerY - (buttonHeight / 2), 0.0f);
+        D3DSURFACE_DESC exitDesc;
+        exitButtonTexture->GetLevelDesc(0, &exitDesc);
+
+        float exitWidth = exitDesc.Width;
+        float exitHeight = exitDesc.Height;
+
+        D3DXVECTOR3 exitButtonPos(exitButtonCenterX - exitWidth / 2.0f, exitButtonCenterY - exitHeight / 2.0f, 0.0f);
         sprite->Draw(exitButtonTexture, NULL, NULL, &exitButtonPos, D3DCOLOR_XRGB(255, 255, 255));
     }
 
     sprite->End();
-     //Draw the boxes around the buttons
-        if (line) {
-            line->SetWidth(2.0f);  // Set line thickness
-            line->Begin();
-            D3DCOLOR lineColor = D3DCOLOR_XRGB(255, 255, 0);  // Yellow color
+    //Draw the boxes around the buttons
+    if (line) {
+        line->SetWidth(2.0f);  // Set line thickness
+        line->Begin();
+        D3DCOLOR lineColor = D3DCOLOR_XRGB(255, 255, 0);  // Yellow color
 
-            // Draw a box around the "Start Game" button
-            D3DXVECTOR2 startButtonBox[5] = {
-                D3DXVECTOR2(startButtonRect.left, startButtonRect.top),
-                D3DXVECTOR2(startButtonRect.right, startButtonRect.top),
-                D3DXVECTOR2(startButtonRect.right, startButtonRect.bottom),
-                D3DXVECTOR2(startButtonRect.left, startButtonRect.bottom),
-                D3DXVECTOR2(startButtonRect.left, startButtonRect.top)  // Close the rectangle
-            };
-            line->Draw(startButtonBox, 5, lineColor);
+        // Draw a box around the "Start Game" button
+        D3DXVECTOR2 startButtonBox[5] = {
+            D3DXVECTOR2(startButtonRect.left, startButtonRect.top),
+            D3DXVECTOR2(startButtonRect.right, startButtonRect.top),
+            D3DXVECTOR2(startButtonRect.right, startButtonRect.bottom),
+            D3DXVECTOR2(startButtonRect.left, startButtonRect.bottom),
+            D3DXVECTOR2(startButtonRect.left, startButtonRect.top)  // Close the rectangle
+        };
+        line->Draw(startButtonBox, 5, lineColor);
 
-            // Draw a box around the "Exit" button
-            D3DXVECTOR2 exitButtonBox[5] = {
-                D3DXVECTOR2(exitButtonRect.left, exitButtonRect.top),
-                D3DXVECTOR2(exitButtonRect.right, exitButtonRect.top),
-                D3DXVECTOR2(exitButtonRect.right, exitButtonRect.bottom),
-                D3DXVECTOR2(exitButtonRect.left, exitButtonRect.bottom),
-                D3DXVECTOR2(exitButtonRect.left, exitButtonRect.top)  // Close the rectangle
-            };
-            line->Draw(exitButtonBox, 5, lineColor);
+        // Draw a box around the "Exit" button
+        D3DXVECTOR2 exitButtonBox[5] = {
+            D3DXVECTOR2(exitButtonRect.left, exitButtonRect.top),
+            D3DXVECTOR2(exitButtonRect.right, exitButtonRect.top),
+            D3DXVECTOR2(exitButtonRect.right, exitButtonRect.bottom),
+            D3DXVECTOR2(exitButtonRect.left, exitButtonRect.bottom),
+            D3DXVECTOR2(exitButtonRect.left, exitButtonRect.top)  // Close the rectangle
+        };
+        line->Draw(exitButtonBox, 5, lineColor);
 
-            line->End();
-        }
-        if (font) {
-            // Draw text over the "Start Game" button, centered
-            RECT startTextRect = startButtonRect;
-            startTextRect.top += 10; // Adjust vertically if needed
-            font->DrawText(NULL, "Start Game", -1, &startTextRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE, D3DCOLOR_XRGB(255, 255, 255));
-        }
+        line->End();
+    }
+    if (font) {
+        // Draw text over the "Start Game" button, centered
+        RECT startTextRect = startButtonRect;
+        startTextRect.top += 10; // Adjust vertically if needed
+        font->DrawText(NULL, "Start Game", -1, &startTextRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE, D3DCOLOR_XRGB(255, 255, 255));
+    }
 
-        // Draw the text over the "Exit" button, centered
-        if (font) {
-            RECT exitTextRect = exitButtonRect;
-            exitTextRect.top += 10; // Adjust vertically if needed
-            font->DrawText(NULL, "Exit", -1, &exitTextRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE, D3DCOLOR_XRGB(255, 255, 255));
-        }
-    inputManager->getInput();
+    // Draw the text over the "Exit" button, centered
+    if (font) {
+        RECT exitTextRect = exitButtonRect;
+        exitTextRect.top += 10; // Adjust vertically if needed
+        font->DrawText(NULL, "Exit", -1, &exitTextRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE, D3DCOLOR_XRGB(255, 255, 255));
+    }
+ 
     // Draw the custom cursor
     if (pointer) {
         D3DXVECTOR3 cursorDrawPos = cursorPos;  // Use tracked cursor position
@@ -186,29 +207,63 @@ void MainMenu::Render() {
     d3dDevice->EndScene();
     d3dDevice->Present(NULL, NULL, NULL, NULL);
     
-    sprite->Release();
-
+    if (sprite) {
+        sprite->Release();
+        sprite = nullptr;
+    }
 }
 
 void MainMenu::Update() {
-    // Get mouse position and check for button clicks
-    POINT cursorPos;
-    GetCursorPos(&cursorPos);
-    ScreenToClient(GetForegroundWindow(), &cursorPos);
+    // Get mouse input using DirectInput
+    DIMOUSESTATE mouseState;
+    HRESULT hr = InputManager::getInstance().getMouseState(&mouseState);  // Assuming you have a method to get the mouse state
+
+    if (FAILED(hr)) {
+        // Reacquire the mouse if the device was lost
+        if (hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED) {
+             // Add this method to reacquire the mouse
+        }
+
+        if (FAILED(hr)) {
+            std::cout << "Failed to retrieve mouse state. Error: " << hr << std::endl;
+            return;
+        }
+    }
+
+    // Update cursor position using DirectInput mouse state
+    cursorPos.x += mouseState.lX;  // mouseState.lX gives relative movement along the X axis
+    cursorPos.y += mouseState.lY;  // mouseState.lY gives relative movement along the Y axis
+
+    // Clamp the cursor position to stay within the screen bounds
+    cursorPos.x = max(0.0f, min(cursorPos.x, 1280.0f));  // Assuming screen width is 1280
+    cursorPos.y = max(0.0f, min(cursorPos.y, 720.0f));
+
+    // Update cursor position using DirectInput mouse state
+    cursorPos.x += mouseState.lX;  // mouseState.lX gives relative movement along the X axis
+    cursorPos.y += mouseState.lY;  // mouseState.lY gives relative movement along the Y axis
+
+    // Clamp the cursor position to stay within the screen bounds
+    cursorPos.x = max(0.0f, min(cursorPos.x, 1280.0f));  // Assuming screen width is 1280
+    cursorPos.y = max(0.0f, min(cursorPos.y, 720.0f));   // Assuming screen height is 720
 
     // Start Button Clicked
-    if (inputManager->isMouseButtonPressed(0)) {  // Left mouse button is index 0
+    if (IM.isMouseButtonPressed(0)) {  // Left mouse button is index 0
         if (cursorPos.x >= startButtonRect.left && cursorPos.x <= startButtonRect.right &&
             cursorPos.y >= startButtonRect.top && cursorPos.y <= startButtonRect.bottom) {
             std::cout << "Start button clicked" << std::endl;
 
-            // Transition to the next game state (e.g., GamePlayState)
-            // Assuming you have a GamePlayState class defined
-            /*GameState* gamePlayState = new GamePlayState();
-            gameStateManager->PushState(gamePlayState); */ // Push new game state
+            // Transition to the loading screen before gameplay
+            LoadingScreen* loadingScreen = new LoadingScreen();
+
+            // Assuming GamePlayState is defined, set it as the next state
+            Game* game = new Game();
+            loadingScreen->setNextState(game);
+
+            // Push the loading screen state
+            GameStateManager::getInstance().PushState(loadingScreen);
         }
 
-        // Exit Button Clicked
+    // Exit Button Clicked
         if (cursorPos.x >= exitButtonRect.left && cursorPos.x <= exitButtonRect.right &&
             cursorPos.y >= exitButtonRect.top && cursorPos.y <= exitButtonRect.bottom) {
             std::cout << "Exit button clicked" << std::endl;

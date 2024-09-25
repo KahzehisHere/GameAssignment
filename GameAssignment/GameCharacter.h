@@ -6,26 +6,10 @@
 //
 //class GameCharacter {
 //public:
-//    GameCharacter(LPDIRECT3DTEXTURE9 tex, int texWidth, int texHeight, int cols, int rows);
+//    
 //    ~GameCharacter();
 //    void render(HRESULT hr, LPD3DXSPRITE sprite);
-//
-//    LPD3DXSPRITE sprite;  
-//    LPD3DXLINE line;
-//    LPD3DXFONT font;
-//    LPDIRECT3DTEXTURE9 militiaTexture;
-//    LPDIRECT3DTEXTURE9 gorkTexture;
-//    LPD3DXFONT militiafont;
-//    LPD3DXFONT gorkfont;
-//    GraphicDevice* device;
-//    IDirect3DDevice9* d3dDevice = device->getDirectDevice();
-//    GraphicDevice* graphicDevice;
-//    int windowScreenWidth = graphicDevice->getScreenWidth();
-//    int windowScreenHeight = graphicDevice->getScreenHeight();
-//    float gorkPosX = static_cast<float>(windowScreenWidth / 2 - gorkWidth / 2);
-//    float gorkPosY = static_cast<float>(windowScreenHeight / 2 - gorkHeight / 2);
-//    float militiaPosX = static_cast<float>(windowScreenWidth / 2 - militiaWidth / 2);
-//    float militiaPosY = static_cast<float>(windowScreenHeight / 2 - militiaHeight / 2);
+//    static GameCharacter& getInstance();
 //    int getgorkWidth() {
 //        return gorkWidth;
 //    }
@@ -57,7 +41,21 @@
 //        return militiacRow;
 //    }
 //private:
+//    GameCharacter();
+//    LPD3DXSPRITE sprite;
+//    LPD3DXLINE line;
+//    LPD3DXFONT font;
+//    
+//    LPDIRECT3DDEVICE9 d3dDevice = nullptr;
 //
+//    GraphicDevice& device = GraphicDevice::getInstance();
+//    WindowManager& windowManager = WindowManager::getWindowManager();
+//    int windowScreenWidth = windowManager.getWidth();
+//    int windowScreenHeight = windowManager.getHeight();
+//    float gorkPosX = static_cast<float>(windowScreenWidth / 2 - gorkWidth / 2);
+//    float gorkPosY = static_cast<float>(windowScreenHeight / 2 - gorkHeight / 2);
+//    float militiaPosX = static_cast<float>(windowScreenWidth / 2 - militiaWidth / 2);
+//    float militiaPosY = static_cast<float>(windowScreenHeight / 2 - militiaHeight / 2);
 //    int gorksheetWidth = 128;
 //    int gorksheetHeight = 128;
 //    int gorkColumn = 4;         
@@ -81,4 +79,6 @@
 //    int militiacRow = militiaFrames / militiaColumn;
 //    int militiacCol = militiaFrames % militiaColumn;
 //    
+//    GameCharacter(const GameCharacter&) = delete;
+//    GameCharacter& operator=(const GameCharacter&) = delete;
 //};
